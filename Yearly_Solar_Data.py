@@ -5,12 +5,6 @@ Created on October 8, 2021
 @author Natalia López
 """
 
-
-# edit the main function to take in only one arg
-# talk to prof about directory for download
-# otro list comprehension para el response del payload
-
-
 from datetime import datetime
 import requests
 import zipfile
@@ -25,13 +19,11 @@ import time
 
 config = load_dotenv(".env")
 
-# year = int(input("Enter the year desired: "))
-# time = int(input("Enter an interval of time desired: (5,30,60) "))
-# email = input("Enter the email to have the data sent to: ")
-
 url_after_2018 = os.getenv("URL_AFTER_2018")
 url_until_2017 = os.getenv("URL_UNTIL_2017")
+
 attributes = os.getenv("ATTRIBUTES")
+
 wkt = os.getenv("WKT")
 default_email = os.getenv("EMAIL")
 api_key = os.getenv("API_KEY")
@@ -53,15 +45,13 @@ def TimeoutHTTPAdapter(url):
     retry_strategy = Retry(
         total=3,
         status_forcelist=[404, 400, 405, 403, 429, 500, 502, 503, 504],
-        #method_whitelist=["HEAD", "GET", "OPTIONS"],
+        #method_whitelist=["HEAD", "GET", "OPTIONS", "POST"],
         backoff_factor=1
     )
     adapter = HTTPAdapter(max_retries=retry_strategy)
     http = requests.Session()
-    http.mount("https://", adapter)
+    http.mount("http://", adapter)
     response = http.get(url, timeout=18000)
-    # response_2017 = http.get(url_until_2017, timeout=18000)
-    # http.get(response.content[{"download_link")}], timeout==3e90e80918309))
     return response
 
 
@@ -93,31 +83,28 @@ function to download the file automatically.
 
 
 def initial_request_builder(start, end=2017, interval=30, email={default_email}):
-    #the payload is the problem it's empty
+    attributes_list = attributes.split(",")
     payload = []
-    payload2 = {}
-    if(start.isdigit()):
-        print("reeee1")
-        if(int(end) - int(start) == 0):
-            for year in range(1):
-                print("reeee2")
-                payload.append(f"email={email}&affiliation=NREL&wkt={wkt}&names={start}&attributes={attributes}&leap_day=false&utc=false&interval={interval}")
-        elif(int(end) - int(start) == 1):
+    years = []
+    if start.isdigit():
+        if int(end) == int(start):
+            for i in range(1):
+                years.append(str(start))
+                years.append(str(end))
+                payload.append(f"names={years}&leap_day=false&interval={interval}"
+                               f"&utc=false&attributes={attributes_list}&email={email}&wkt={wkt}")
+        elif int(end) - int(start) == 1:
             for year in range(2):
                 print("reeee3")
-                payload.append(f"email={email}&affiliation=NREL&wkt={wkt}&names={start,end}&attributes={attributes}&leap_day=false&utc=false&interval={interval}")
-        elif (int(end) - int(start) == 2):
+                payload.append(f"email={email}&wkt={wkt}&names={start,end}&attributes={attributes}&leap_day=false&utc=false&interval={interval}")
+        elif int(end) - int(start) == 2:
             for year in range(3):
                 print("reeee4")
-                payload.append(f"email={email}&affiliation=NREL&wkt={wkt}&names={int(start),2016,end}&attributes={attributes}&leap_day=false&utc=false&interval={interval}")
+                payload.append(f"email={email}&wkt={wkt}&names={int(start),2016,end}&attributes={attributes}&leap_day=false&utc=false&interval={interval}")
 
-    #print("payload = ", payload[0])
-    response = requests.post(url_until_2017, data=payload[0], headers=headers)
-    #response = requests.request("POST", url_until_2017, data=payload[0], headers=headers)
-    print(headers)
-    print(url_until_2017 + payload[0])
-    #print("2017 status code = ", response.status_code)
-    #print("2017 text\n", response.text)
+    print("payload = ", payload[0])
+    response = requests.request("POST", url_until_2017, json=payload[0], headers=headers)
+    #print(url_until_2017 + payload[0])
     return response
 
 
@@ -174,26 +161,24 @@ if __name__ == "__main__":
     end_year = sys.argv[2]
     interval = sys.argv[3]
     email = sys.argv[4]
-    if(start_year.isdigit() and end_year.isdigit() and interval.isdigit()):
-        print("passed first if")
-        if (int(start_year) <= 2017 and int(start_year) >= 1998):
-            print("passed second if")
+    if start_year.isdigit() and end_year.isdigit() and interval.isdigit():
+        if 2017 >= int(start_year) >= 1998:
             response = initial_request_builder(start_year, int(end_year), int(interval), email)
-            print(response.status_code)
-        if (response.status_code == 200):
-            print("passed third if")
-            jsonResponse = response.json()
-            download_url = jsonResponse["download_url"]
-            TimeoutHTTPAdapter(download_url)
-        elif (int(start_year) >= 2018):
-            if (len(sys.argv) == 4):
+            print(response.json())
+            if response.status_code == 200:
+                print("passed third if")
+                jsonResponse = response.json()
+                download_url = jsonResponse["download_url"]
+                TimeoutHTTPAdapter(download_url)
+        elif int(start_year) >= 2018:
+            if len(sys.argv) == 4:
                 initial_request_builder_2018(int(sys.argv[1]), int(sys.argv[2]), int(sys.argv[3]), sys.argv[4])
-        elif (len(sys.argv) == 3):
-             initial_request_builder_2018(int(sys.argv[1]), int(sys.argv[3]), sys.argv[4])
-        elif (len(sys.argv) == 2):
-            initial_request_builder_2018(int(sys.argv[1]), sys.argv[4])
-        elif (len(sys.argv) == 1):
-            initial_request_builder_2018(int(sys.argv[1]))
+            elif len(sys.argv) == 3:
+                initial_request_builder_2018(int(sys.argv[1]), int(sys.argv[3]), sys.argv[4])
+            elif len(sys.argv) == 2:
+                initial_request_builder_2018(int(sys.argv[1]), sys.argv[4])
+            elif len(sys.argv) == 1:
+                initial_request_builder_2018(int(sys.argv[1]))
 
         else:
             print("Enter a valid year after the script name.")
