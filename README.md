@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="./img/ff_logo2013.png" width="200px">
+  <img src="./nrel-logo.jpg" width="200px">
   <h1>NREL Solar Data</h1>
 </div>
 
