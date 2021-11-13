@@ -3,9 +3,9 @@
   <h1>NREL Solar Data</h1>
 </div>
 
-<p align="center">
-  Obtaining solar data for Puerto Rico using the NREL API.
-</p>
+<h2 align="center">
+  Obtaining solar data for Puerto Rico using the NREL API
+</h2>
 
 
 ## Developers
