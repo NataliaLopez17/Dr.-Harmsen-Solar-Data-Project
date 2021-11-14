@@ -20,7 +20,6 @@ import time
 config = load_dotenv(".env")
 
 url_after_2018 = os.getenv("URL_AFTER_2018")
-url_until_2017 = os.getenv("URL_UNTIL_2017")
 
 attributes = os.getenv("ATTRIBUTES")
 
@@ -67,51 +66,6 @@ headers = {
 This function will generate the post request to the API endpoint for a given set of years, and intervals. 
 ___________________________________________________________________
 Parameters:
-start: This is the desired starting year for the data acquisition.
-end: The default value for this is 2017 as that is the limit for the API endpoint utilized. 
-This parameter will determine until which year you wish to gather data from.
-interval: This will determine what interval of time the data will be gathered in. 
-The available intervals are: 30 and 60. 
-There is a possibility of 5 but the current request of data is too high for the use of 5 minute interval.
-email: This will be the email that the generated file will be sent to after it has been created 
-and is ready for download. 
-___________________________________________________________________
-Return:
-response: This parameter will be the response of the request that will serve to call the following 
-function to download the file automatically.
-'''
-
-
-def initial_request_builder(start, end=2017, interval=30, email={default_email}):
-    attributes_list = attributes.split(",")
-    payload = []
-    years = []
-    if start.isdigit():
-        if int(end) == int(start):
-            for i in range(1):
-                years.append(str(start))
-                years.append(str(end))
-                payload.append(f"names={years}&leap_day=false&interval={interval}"
-                               f"&utc=false&attributes={attributes_list}&email={email}&wkt={wkt}")
-        elif int(end) - int(start) == 1:
-            for year in range(2):
-                print("reeee3")
-                payload.append(f"email={email}&wkt={wkt}&names={start,end}&attributes={attributes}&leap_day=false&utc=false&interval={interval}")
-        elif int(end) - int(start) == 2:
-            for year in range(3):
-                print("reeee4")
-                payload.append(f"email={email}&wkt={wkt}&names={int(start),2016,end}&attributes={attributes}&leap_day=false&utc=false&interval={interval}")
-
-    print("payload = ", payload[0])
-    response = requests.request("POST", url_until_2017, json=payload[0], headers=headers)
-    #print(url_until_2017 + payload[0])
-    return response
-
-
-'''
-This function will generate the post request to the API endpoint for a given set of years, and intervals. 
-___________________________________________________________________
-Parameters:
 start: This is the desired starting year for the data acquisition. The default for this parameter 
 is 2018 as it is the minimum year available for data download. 
 end: The default value for this is the current year as that is the limit for the API endpoint utilized. 
@@ -127,14 +81,24 @@ response: This parameter will be the response of the request that will serve to 
 '''
 
 
-def initial_request_builder_2018(start=2018, end=datetime.now().year, interval=30, email={default_email}):
-    payload = [
-        f"names={year}&leap_day=false&interval={interval}&utc=false&email={email}\\&attributes={attributes}&wkt={wkt}"
-        for year in range(start, end)]
-    response = requests.request("GET", url_after_2018, data=payload, headers=headers)
-    print("2018 response\n", response.content)
-    return response
+def initial_request_builder(start, end=datetime.now().year, interval=30, email={default_email}):
+    payload = []
+    if start.isdigit():
+        if int(end) == int(start):
+            payload.append(f"names=2018&leap_day=false&interval={interval}"
+                           f"&utc=false&attributes={attributes}&email={email}&wkt={wkt}")
+        elif int(end) - int(start) == 1:
+            for year in range(2):
+                print("reeee3")
+                payload.append(f"email={email}&wkt={wkt}&names={start,end}&attributes={attributes}&leap_day=false&utc=false&interval={interval}")
+        elif int(end) - int(start) == 2:
+            for year in range(3):
+                print("reeee4")
+                payload.append(f"email={email}&wkt={wkt}&names={int(start),2016,end}&attributes={attributes}&leap_day=false&utc=false&interval={interval}")
 
+    print("payload = ", payload[0], "\n")
+    response = requests.request("POST", url_after_2018, json=payload[0], headers=headers)
+    return response
 
 def wait():
     wait()
@@ -162,7 +126,7 @@ if __name__ == "__main__":
     interval = sys.argv[3]
     email = sys.argv[4]
     if start_year.isdigit() and end_year.isdigit() and interval.isdigit():
-        if 2017 >= int(start_year) >= 1998:
+        if int(start_year) >= 2018:
             response = initial_request_builder(start_year, int(end_year), int(interval), email)
             print(response.json())
             if response.status_code == 200:
@@ -170,15 +134,5 @@ if __name__ == "__main__":
                 jsonResponse = response.json()
                 download_url = jsonResponse["download_url"]
                 TimeoutHTTPAdapter(download_url)
-        elif int(start_year) >= 2018:
-            if len(sys.argv) == 4:
-                initial_request_builder_2018(int(sys.argv[1]), int(sys.argv[2]), int(sys.argv[3]), sys.argv[4])
-            elif len(sys.argv) == 3:
-                initial_request_builder_2018(int(sys.argv[1]), int(sys.argv[3]), sys.argv[4])
-            elif len(sys.argv) == 2:
-                initial_request_builder_2018(int(sys.argv[1]), sys.argv[4])
-            elif len(sys.argv) == 1:
-                initial_request_builder_2018(int(sys.argv[1]))
-
         else:
             print("Enter a valid year after the script name.")
