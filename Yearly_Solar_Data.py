@@ -10,19 +10,14 @@ import requests
 import zipfile
 import io
 import sys
-from requests.exceptions import Timeout
 from dotenv import load_dotenv
 import os
 from requests.adapters import HTTPAdapter
 from requests.packages.urllib3.util.retry import Retry
-import time
 
 config = load_dotenv(".env")
-
 url_after_2018 = os.getenv("URL_AFTER_2018")
-
 attributes = os.getenv("ATTRIBUTES")
-
 wkt = os.getenv("WKT")
 default_email = os.getenv("EMAIL")
 api_key = os.getenv("API_KEY")
@@ -44,12 +39,12 @@ def TimeoutHTTPAdapter(url):
     retry_strategy = Retry(
         total=3,
         status_forcelist=[404, 400, 405, 403, 429, 500, 502, 503, 504],
-        #method_whitelist=["HEAD", "GET", "OPTIONS", "POST"],
+        method_whitelist=["HEAD", "GET", "OPTIONS", "POST"],
         backoff_factor=1
     )
     adapter = HTTPAdapter(max_retries=retry_strategy)
     http = requests.Session()
-    http.mount("http://", adapter)
+    http.mount("https://", adapter)
     response = http.get(url, timeout=18000)
     return response
 
@@ -81,24 +76,21 @@ response: This parameter will be the response of the request that will serve to 
 '''
 
 
-def initial_request_builder(start, end=datetime.now().year, interval=30, email={default_email}):
+def initial_request_builder(start=2018, end=datetime.now().year, interval=30, email={default_email}):
     payload = []
-    if start.isdigit():
-        if int(end) == int(start):
-            payload.append(f"names=2018&leap_day=false&interval={interval}"
-                           f"&utc=false&attributes={attributes}&email={email}&wkt={wkt}")
-        elif int(end) - int(start) == 1:
-            for year in range(2):
-                print("reeee3")
-                payload.append(f"email={email}&wkt={wkt}&names={start,end}&attributes={attributes}&leap_day=false&utc=false&interval={interval}")
-        elif int(end) - int(start) == 2:
-            for year in range(3):
-                print("reeee4")
-                payload.append(f"email={email}&wkt={wkt}&names={int(start),2016,end}&attributes={attributes}&leap_day=false&utc=false&interval={interval}")
+    years = ""
+    for year in range(int(start), int(end + 1)):
+        years = years + str(year) + ","
+    years = years.rstrip(",")
+    print(years)
+
+    payload.append(f"names={years}&leap_day=false&interval={interval}"
+                   f"&utc=false&attributes={attributes}&email={email}&wkt={wkt}")
 
     print("payload = ", payload[0], "\n")
     response = requests.request("POST", url_after_2018, json=payload[0], headers=headers)
     return response
+
 
 def wait():
     wait()
@@ -127,7 +119,7 @@ if __name__ == "__main__":
     email = sys.argv[4]
     if start_year.isdigit() and end_year.isdigit() and interval.isdigit():
         if int(start_year) >= 2018:
-            response = initial_request_builder(start_year, int(end_year), int(interval), email)
+            response = initial_request_builder(int(start_year), int(end_year), int(interval), email)
             print(response.json())
             if response.status_code == 200:
                 print("passed third if")
@@ -135,4 +127,4 @@ if __name__ == "__main__":
                 download_url = jsonResponse["download_url"]
                 TimeoutHTTPAdapter(download_url)
         else:
-            print("Enter a valid year after the script name.")
+            print("Enter a valid year starting at 2018 after the script name.")
