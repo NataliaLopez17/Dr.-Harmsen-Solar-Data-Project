@@ -4,7 +4,7 @@ Created on October 8, 2021
 @author Elias Chevere
 @author Natalia López
 """
-
+import json
 from datetime import datetime
 import requests
 import zipfile
@@ -77,18 +77,18 @@ response: This parameter will be the response of the request that will serve to 
 
 
 def initial_request_builder(start=2018, end=datetime.now().year, interval=30, email={default_email}):
-    payload = []
     years = ""
     for year in range(int(start), int(end + 1)):
         years = years + str(year) + ","
     years = years.rstrip(",")
     print(years)
 
-    payload.append(f"names={years}&leap_day=false&interval={interval}"
-                   f"&utc=false&attributes={attributes}&email={email}&wkt={wkt}")
+    #payload = {"names": years, "leap_day": "false", "interval": interval,"utc": "false", "attributes": attributes, "email": email, "wkt": wkt}
+    payload = "names={}&leap_day=false&interval={}&utc=false&attributes={}&email={}&wkt={}".format(years,interval,attributes,email,wkt)
 
-    print("payload = ", payload[0], "\n")
-    response = requests.request("POST", url_after_2018, json=payload[0], headers=headers)
+    print("payload = ", payload, "\n")
+    # response = requests.request("POST", url_after_2018, data=payload[0], headers=headers)
+    response = requests.request("POST", url_after_2018, data=payload, headers=headers)
     return response
 
 
