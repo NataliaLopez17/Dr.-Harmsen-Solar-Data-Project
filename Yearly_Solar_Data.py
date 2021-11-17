@@ -24,6 +24,24 @@ api_key = os.getenv("API_KEY")
 destination = os.getenv('DESTINATION')
 
 '''
+Variables that go inside the POLYGON(()) function
+-------------------------------------------------
+xmn -> minimum x coordinate (left border)
+xmx -> maximum x coordinate (right border)
+ymn -> minimum y coordinate (bottom border)
+ymx -> maximum y coordinate (top border)
+
+Example Polygon
+---------------
+POLYGON((",${xmn},"",${ymn},",",${xmn},"",${ymx},",",${xmx},"",${ymx},",",${xmx},"",${ymn},",",${xmn},"",${ymn},"))
+'''
+xmn = os.getenv("xmn1")
+xmx = os.getenv("xmx1")
+ymn = os.getenv("ymn1")
+ymx = os.getenv("ymx1")
+
+
+'''
 Takes the download link from the response in the request builder function and then uses the link to download the file
 and retry if it does not find it.
 ---------------------------------------------------------------------------------------------------------------------
@@ -83,11 +101,11 @@ def initial_request_builder(start=2018, end=datetime.now().year, interval=30, em
     years = years.rstrip(",")
     print(years)
 
-    #payload = {"names": years, "leap_day": "false", "interval": interval,"utc": "false", "attributes": attributes, "email": email, "wkt": wkt}
-    payload = "names={}&leap_day=false&interval={}&utc=false&attributes={}&email={}&wkt={}".format(years,interval,attributes,email,wkt)
+    # payload = {"names": years, "leap_day": "false", "interval": interval,"utc": "false", "attributes": attributes, "email": email, "wkt": wkt}
+    payload = "names={}&leap_day=false&interval={}&utc=false&attributes={}&email={}&wkt={}".format(years, interval,
+                                                                                                   attributes, email,
+                                                                                                   wkt)
 
-    print("payload = ", payload, "\n")
-    # response = requests.request("POST", url_after_2018, data=payload[0], headers=headers)
     response = requests.request("POST", url_after_2018, data=payload, headers=headers)
     return response
 
