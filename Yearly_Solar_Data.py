@@ -18,28 +18,11 @@ from requests.packages.urllib3.util.retry import Retry
 config = load_dotenv(".env")
 url_after_2018 = os.getenv("URL_AFTER_2018")
 attributes = os.getenv("ATTRIBUTES")
-wkt = os.getenv("WKT")
+wkt = os.getenv("WKT1")
+wkt2 = os.getenv("WKT2")
 default_email = os.getenv("EMAIL")
 api_key = os.getenv("API_KEY")
 destination = os.getenv('DESTINATION')
-
-'''
-Variables that go inside the POLYGON(()) function
--------------------------------------------------
-xmn -> minimum x coordinate (left border)
-xmx -> maximum x coordinate (right border)
-ymn -> minimum y coordinate (bottom border)
-ymx -> maximum y coordinate (top border)
-
-Example Polygon
----------------
-POLYGON((",${xmn},"",${ymn},",",${xmn},"",${ymx},",",${xmx},"",${ymx},",",${xmx},"",${ymn},",",${xmn},"",${ymn},"))
-'''
-xmn = os.getenv("xmn1")
-xmx = os.getenv("xmx1")
-ymn = os.getenv("ymn1")
-ymx = os.getenv("ymx1")
-
 
 '''
 Takes the download link from the response in the request builder function and then uses the link to download the file
@@ -99,15 +82,24 @@ def initial_request_builder(start=2018, end=datetime.now().year, interval=30, em
     for year in range(int(start), int(end + 1)):
         years = years + str(year) + ","
     years = years.rstrip(",")
-    print(years)
 
-    # payload = {"names": years, "leap_day": "false", "interval": interval,"utc": "false", "attributes": attributes, "email": email, "wkt": wkt}
     payload = "names={}&leap_day=false&interval={}&utc=false&attributes={}&email={}&wkt={}".format(years, interval,
                                                                                                    attributes, email,
                                                                                                    wkt)
-
     response = requests.request("POST", url_after_2018, data=payload, headers=headers)
     return response
+
+
+def initial_request_builder2(start=2018, end=datetime.now().year, interval=30, email={default_email}):
+    years = ""
+    for year in range(int(start), int(end + 1)):
+        years = years + str(year) + ","
+    years = years.rstrip(",")
+    payload2 = "names={}&leap_day=false&interval={}&utc=false&attributes={}&email={}&wkt={}".format(years, interval,
+                                                                                                    attributes, email,
+                                                                                                    wkt2)
+    response2 = requests.request("POST", url_after_2018, data=payload2, headers=headers)
+    return response2
 
 
 def wait():
@@ -138,11 +130,18 @@ if __name__ == "__main__":
     if start_year.isdigit() and end_year.isdigit() and interval.isdigit():
         if int(start_year) >= 2018:
             response = initial_request_builder(int(start_year), int(end_year), int(interval), email)
+            #response2 = initial_request_builder2(int(start_year), int(end_year), int(interval), email)
             print(response.json())
+            #print(response2.json())
             if response.status_code == 200:
                 print("passed third if")
                 jsonResponse = response.json()
-                download_url = jsonResponse["download_url"]
+                #jsonResponse2 = response2.json()
+                download_url = jsonResponse["outputs"]["downloadUrl"]
+                print(download_url)
+                #download_url2 = jsonResponse2["downloadUrl"]
                 TimeoutHTTPAdapter(download_url)
+                #TimeoutHTTPAdapter(download_url2)
+                download_zip(download_url, destination)
         else:
             print("Enter a valid year starting at 2018 after the script name.")
