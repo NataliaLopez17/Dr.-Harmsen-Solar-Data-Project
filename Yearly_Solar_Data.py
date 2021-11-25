@@ -87,12 +87,11 @@ def timeout_http_adapter2(url_se, url_c, url_v):
     return response_se, response_c, response_v
 
 
-headers = {
-    """
+"""
     timeout_http_adapter2 '[These are the headers to be used for the requests done 
     to each one of the nsrd API endpoints.]'
-    """
-
+"""
+headers = {
     'content-type': "application/x-www-form-urlencoded",
     'cache-control': "no-cache"
 }
