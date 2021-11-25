@@ -1,0 +1,8 @@
+[FORMAT]
+max-line-length=100
+
+disable=
+    trailing-whitespace,
+    consider-using-f-string,
+    redefined-outer-name
+
