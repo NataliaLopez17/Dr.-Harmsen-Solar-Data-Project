@@ -28,6 +28,10 @@ default_email = os.getenv("EMAIL")
 api_key = os.getenv("API_KEY")
 destination = os.getenv('DESTINATION')
 
+print("In the command prompt please type python <file_name> <start_year> <end_year> <time_interval> <email>", "\n")
+
+print("<start_year> and <end_year> have to be the same.", "\n")
+
 
 def timeout_http_adapter(url_nw, url_ne, url_sw):
     """
@@ -96,7 +100,7 @@ headers = {
 }
 
 
-def nw_request_builder(start=2018, end=datetime.now().year, interval=15, email={default_email}):
+def nw_request_builder(start=2018, end=2018, interval=15, email={default_email}):
     """
     nw_request_builder [This function will generate the post request to the API endpoint 
     for a given set of years, and intervals.]
@@ -120,19 +124,19 @@ def nw_request_builder(start=2018, end=datetime.now().year, interval=15, email={
         [response]: [This parameter will be the response of the request that will 
     serve to call the following function to download the file automatically.]
     """
-    years = ""
-    for year in range(int(start), int(end + 1)):
-        years = years + str(year) + ","
-    years = years.rstrip(",")
+    # years = ""
+    # for year in range(int(start), int(end + 1)):
+    #     years = years + str(year) + ","
+    # years = years.rstrip(",")
 
     payload = "names={}&leap_day=false&interval={}&utc=false&attributes={}&email={}&wkt={}".format(
-        years, interval, attributes, email, wktnw)
+        start, interval, attributes, email, wktnw)
     response = requests.request(
         "POST", url_after_2018, data=payload, headers=headers)
     return response
 
 
-def ne_request_builder(start=2018, end=datetime.now().year, interval=15, email={default_email}):
+def ne_request_builder(start=2018, end=2018, interval=15, email={default_email}):
     """
     ne_request_builder [This function will generate the post request to the API endpoint 
     for a given set of years, and intervals.]
@@ -156,18 +160,18 @@ def ne_request_builder(start=2018, end=datetime.now().year, interval=15, email={
         [response]: [This parameter will be the response of the request that will 
     serve to call the following function to download the file automatically.]
     """
-    years = ""
-    for year in range(int(start), int(end + 1)):
-        years = years + str(year) + ","
-    years = years.rstrip(",")
+    # years = ""
+    # for year in range(int(start), int(end + 1)):
+    #     years = years + str(year) + ","
+    # years = years.rstrip(",")
     payload = "names={}&leap_day=false&interval={}&utc=false&attributes={}&email={}&wkt={}".format(
-        years, interval, attributes, email, wktne)
+        start, interval, attributes, email, wktne)
     response = requests.request(
         "POST", url_after_2018, data=payload, headers=headers)
     return response
 
 
-def sw_request_builder(start=2018, end=datetime.now().year, interval=15, email={default_email}):
+def sw_request_builder(start=2018, end=2018, interval=15, email={default_email}):
     """
     sw_request_builder [This function will generate the post request to the API endpoint 
     for a given set of years, and intervals.]
@@ -191,18 +195,18 @@ def sw_request_builder(start=2018, end=datetime.now().year, interval=15, email={
         [response]: [This parameter will be the response of the request that will 
     serve to call the following function to download the file automatically.]
     """
-    years = ""
-    for year in range(int(start), int(end + 1)):
-        years = years + str(year) + ","
-    years = years.rstrip(",")
+    # years = ""
+    # for year in range(int(start), int(end + 1)):
+    #     years = years + str(year) + ","
+    # years = years.rstrip(",")
     payload = "names={}&leap_day=false&interval={}&utc=false&attributes={}&email={}&wkt={}".format(
-        years, interval, attributes, email, wktsw)
+        start, interval, attributes, email, wktsw)
     response = requests.request(
         "POST", url_after_2018, data=payload, headers=headers)
     return response
 
 
-def se_request_builder(start=2018, end=datetime.now().year, interval=15, email={default_email}):
+def se_request_builder(start=2018, end=2018, interval=15, email={default_email}):
     """
     se_request_builder [This function will generate the post request to the API endpoint 
     for a given set of years, and intervals.]
@@ -226,18 +230,18 @@ def se_request_builder(start=2018, end=datetime.now().year, interval=15, email={
         [response]: [This parameter will be the response of the request that will 
     serve to call the following function to download the file automatically.]
     """
-    years = ""
-    for year in range(int(start), int(end + 1)):
-        years = years + str(year) + ","
-    years = years.rstrip(",")
+    # years = ""
+    # for year in range(int(start), int(end + 1)):
+    #     years = years + str(year) + ","
+    # years = years.rstrip(",")
     payload = "names={}&leap_day=false&interval={}&utc=false&attributes={}&email={}&wkt={}".format(
-        years, interval, attributes, email, wktse)
+        start, interval, attributes, email, wktse)
     response = requests.request(
         "POST", url_after_2018, data=payload, headers=headers)
     return response
 
 
-def c_request_builder(start=2018, end=datetime.now().year, interval=15, email={default_email}):
+def c_request_builder(start=2018, end=2018, interval=15, email={default_email}):
     """
     c_request_builder [This function will generate the post request to the API endpoint 
     for a given set of years, and intervals.]
@@ -261,18 +265,18 @@ def c_request_builder(start=2018, end=datetime.now().year, interval=15, email={d
         [response]: [This parameter will be the response of the request that will 
     serve to call the following function to download the file automatically.]
     """
-    years = ""
-    for year in range(int(start), int(end + 1)):
-        years = years + str(year) + ","
-    years = years.rstrip(",")
+    # years = ""
+    # for year in range(int(start), int(end + 1)):
+    #     years = years + str(year) + ","
+    # years = years.rstrip(",")
     payload = "names={}&leap_day=false&interval={}&utc=false&attributes={}&email={}&wkt={}".format(
-        years, interval, attributes, email, wktc)
+        start, interval, attributes, email, wktc)
     response = requests.request(
         "POST", url_after_2018, data=payload, headers=headers)
     return response
 
 
-def v_request_builder(start=2018, end=datetime.now().year, interval=15, email={default_email}):
+def v_request_builder(start=2018, end=2018, interval=15, email={default_email}):
     """
     v_request_builder [This function will generate the post request to the API endpoint 
     for a given set of years, and intervals.]
@@ -296,12 +300,12 @@ def v_request_builder(start=2018, end=datetime.now().year, interval=15, email={d
         [response]: [This parameter will be the response of the request that will 
     serve to call the following function to download the file automatically.]
     """
-    years = ""
-    for year in range(int(start), int(end + 1)):
-        years = years + str(year) + ","
-    years = years.rstrip(",")
+    # years = ""
+    # for year in range(int(start), int(end + 1)):
+    #     years = years + str(year) + ","
+    # years = years.rstrip(",")
     payload = "names={}&leap_day=false&interval={}&utc=false&attributes={}&email={}&wkt={}".format(
-        years, interval, attributes, email, wktv)
+        start, interval, attributes, email, wktv)
     response = requests.request(
         "POST", url_after_2018, data=payload, headers=headers)
     return response
@@ -376,45 +380,37 @@ if __name__ == "__main__":
     interval = sys.argv[3]
     email = sys.argv[4]
     items = range(10)
-    print("In the command prompt please type \
-          python <file_name> <start_year> <end_year> <time_interval> <email>")
 
     if start_year.isdigit() and end_year.isdigit() and interval.isdigit():
         if int(start_year) >= 2018:
 
             response_nw = nw_request_builder(
                 int(start_year), int(end_year), int(interval), email)
-            print("response_nw", response_nw.content, "\n")
 
             time.sleep(60)
 
             response_ne = ne_request_builder(
                 int(start_year), int(end_year), int(interval), email)
-            print("response_ne", response_ne.content, "\n")
 
             time.sleep(60)
 
             response_sw = sw_request_builder(
                 int(start_year), int(end_year), int(interval), email)
-            print("response_sw", response_sw.content, "\n")
 
             time.sleep(60)
 
             response_se = se_request_builder(
                 int(start_year), int(end_year), int(interval), email)
-            print("response_se", response_se.content, "\n")
 
             time.sleep(60)
 
             response_c = c_request_builder(
                 int(start_year), int(end_year), int(interval), email)
-            print("response_c", response_c.content, "\n")
 
             time.sleep(60)
 
             response_v = v_request_builder(
                 int(start_year), int(end_year), int(interval), email)
-            print("response_v", response_v.content, "\n")
 
             if response_sw.status_code == 200 and response_ne.status_code == 200:
                 if response_sw.status_code == 200 and response_se.status_code == 200:
@@ -460,4 +456,4 @@ if __name__ == "__main__":
         else:
             print("Make sure that the run command is in the form of \
                 python <file_name> <start_year> <end_year> <time_interval> <email> \
-                    where <start_year> >= 2018.")
+                    where <start_year> >= 2018 and <end_year> is the same as <start_year>.")
