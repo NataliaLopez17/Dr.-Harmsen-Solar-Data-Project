@@ -28,6 +28,10 @@ default_email = os.getenv("EMAIL")
 api_key = os.getenv("API_KEY")
 destination = os.getenv('DESTINATION')
 
+print("In the command prompt please type python <file_name> <start_year> <end_year> <time_interval> <email>", "\n")
+
+print("<start_year> and <end_year> have to be the same.", "\n")
+
 
 def timeout_http_adapter(url_nw, url_ne, url_sw):
     """
@@ -51,7 +55,7 @@ def timeout_http_adapter(url_nw, url_ne, url_sw):
     adapter = HTTPAdapter(max_retries=retry_strategy)
     http = requests.Session()
     http.mount("https://", adapter)
-    print("passed http.mount", "\n")
+    print("fetching responses for nw, ne and sw...")
     response_nw = http.get(url_nw, timeout=10)
     response_ne = http.get(url_ne, timeout=10)
     response_sw = http.get(url_sw, timeout=10)
@@ -79,8 +83,7 @@ def timeout_http_adapter2(url_se, url_c, url_v):
     adapter = HTTPAdapter(max_retries=retry_strategy)
     http = requests.Session()
     http.mount("https://", adapter)
-    print("passed http.mount", "\n")
-    print("fetching response_sw...")
+    print("fetching responses for se, c and v...")
     response_se = http.get(url_se, timeout=10)
     response_c = http.get(url_c, timeout=10)
     response_v = http.get(url_v, timeout=10)
@@ -97,7 +100,7 @@ headers = {
 }
 
 
-def nw_request_builder(start=2018, end=datetime.now().year, interval=15, email={default_email}):
+def nw_request_builder(start=2018, end=2018, interval=15, email={default_email}):
     """
     nw_request_builder [This function will generate the post request to the API endpoint 
     for a given set of years, and intervals.]
@@ -121,19 +124,19 @@ def nw_request_builder(start=2018, end=datetime.now().year, interval=15, email={
         [response]: [This parameter will be the response of the request that will 
     serve to call the following function to download the file automatically.]
     """
-    years = ""
-    for year in range(int(start), int(end + 1)):
-        years = years + str(year) + ","
-    years = years.rstrip(",")
+    # years = ""
+    # for year in range(int(start), int(end + 1)):
+    #     years = years + str(year) + ","
+    # years = years.rstrip(",")
 
     payload = "names={}&leap_day=false&interval={}&utc=false&attributes={}&email={}&wkt={}".format(
-        years, interval, attributes, email, wktnw)
+        start, interval, attributes, email, wktnw)
     response = requests.request(
         "POST", url_after_2018, data=payload, headers=headers)
     return response
 
 
-def ne_request_builder(start=2018, end=datetime.now().year, interval=15, email={default_email}):
+def ne_request_builder(start=2018, end=2018, interval=15, email={default_email}):
     """
     ne_request_builder [This function will generate the post request to the API endpoint 
     for a given set of years, and intervals.]
@@ -157,18 +160,18 @@ def ne_request_builder(start=2018, end=datetime.now().year, interval=15, email={
         [response]: [This parameter will be the response of the request that will 
     serve to call the following function to download the file automatically.]
     """
-    years = ""
-    for year in range(int(start), int(end + 1)):
-        years = years + str(year) + ","
-    years = years.rstrip(",")
+    # years = ""
+    # for year in range(int(start), int(end + 1)):
+    #     years = years + str(year) + ","
+    # years = years.rstrip(",")
     payload = "names={}&leap_day=false&interval={}&utc=false&attributes={}&email={}&wkt={}".format(
-        years, interval, attributes, email, wktne)
+        start, interval, attributes, email, wktne)
     response = requests.request(
         "POST", url_after_2018, data=payload, headers=headers)
     return response
 
 
-def sw_request_builder(start=2018, end=datetime.now().year, interval=15, email={default_email}):
+def sw_request_builder(start=2018, end=2018, interval=15, email={default_email}):
     """
     sw_request_builder [This function will generate the post request to the API endpoint 
     for a given set of years, and intervals.]
@@ -192,18 +195,18 @@ def sw_request_builder(start=2018, end=datetime.now().year, interval=15, email={
         [response]: [This parameter will be the response of the request that will 
     serve to call the following function to download the file automatically.]
     """
-    years = ""
-    for year in range(int(start), int(end + 1)):
-        years = years + str(year) + ","
-    years = years.rstrip(",")
+    # years = ""
+    # for year in range(int(start), int(end + 1)):
+    #     years = years + str(year) + ","
+    # years = years.rstrip(",")
     payload = "names={}&leap_day=false&interval={}&utc=false&attributes={}&email={}&wkt={}".format(
-        years, interval, attributes, email, wktsw)
+        start, interval, attributes, email, wktsw)
     response = requests.request(
         "POST", url_after_2018, data=payload, headers=headers)
     return response
 
 
-def se_request_builder(start=2018, end=datetime.now().year, interval=15, email={default_email}):
+def se_request_builder(start=2018, end=2018, interval=15, email={default_email}):
     """
     se_request_builder [This function will generate the post request to the API endpoint 
     for a given set of years, and intervals.]
@@ -227,18 +230,18 @@ def se_request_builder(start=2018, end=datetime.now().year, interval=15, email={
         [response]: [This parameter will be the response of the request that will 
     serve to call the following function to download the file automatically.]
     """
-    years = ""
-    for year in range(int(start), int(end + 1)):
-        years = years + str(year) + ","
-    years = years.rstrip(",")
+    # years = ""
+    # for year in range(int(start), int(end + 1)):
+    #     years = years + str(year) + ","
+    # years = years.rstrip(",")
     payload = "names={}&leap_day=false&interval={}&utc=false&attributes={}&email={}&wkt={}".format(
-        years, interval, attributes, email, wktse)
+        start, interval, attributes, email, wktse)
     response = requests.request(
         "POST", url_after_2018, data=payload, headers=headers)
     return response
 
 
-def c_request_builder(start=2018, end=datetime.now().year, interval=15, email={default_email}):
+def c_request_builder(start=2018, end=2018, interval=15, email={default_email}):
     """
     c_request_builder [This function will generate the post request to the API endpoint 
     for a given set of years, and intervals.]
@@ -262,18 +265,18 @@ def c_request_builder(start=2018, end=datetime.now().year, interval=15, email={d
         [response]: [This parameter will be the response of the request that will 
     serve to call the following function to download the file automatically.]
     """
-    years = ""
-    for year in range(int(start), int(end + 1)):
-        years = years + str(year) + ","
-    years = years.rstrip(",")
+    # years = ""
+    # for year in range(int(start), int(end + 1)):
+    #     years = years + str(year) + ","
+    # years = years.rstrip(",")
     payload = "names={}&leap_day=false&interval={}&utc=false&attributes={}&email={}&wkt={}".format(
-        years, interval, attributes, email, wktc)
+        start, interval, attributes, email, wktc)
     response = requests.request(
         "POST", url_after_2018, data=payload, headers=headers)
     return response
 
 
-def v_request_builder(start=2018, end=datetime.now().year, interval=15, email={default_email}):
+def v_request_builder(start=2018, end=2018, interval=15, email={default_email}):
     """
     v_request_builder [This function will generate the post request to the API endpoint 
     for a given set of years, and intervals.]
@@ -297,24 +300,15 @@ def v_request_builder(start=2018, end=datetime.now().year, interval=15, email={d
         [response]: [This parameter will be the response of the request that will 
     serve to call the following function to download the file automatically.]
     """
-    years = ""
-    for year in range(int(start), int(end + 1)):
-        years = years + str(year) + ","
-    years = years.rstrip(",")
+    # years = ""
+    # for year in range(int(start), int(end + 1)):
+    #     years = years + str(year) + ","
+    # years = years.rstrip(",")
     payload = "names={}&leap_day=false&interval={}&utc=false&attributes={}&email={}&wkt={}".format(
-        years, interval, attributes, email, wktv)
+        start, interval, attributes, email, wktv)
     response = requests.request(
         "POST", url_after_2018, data=payload, headers=headers)
     return response
-
-
-'''
- 
-___________________________________________________________________
-Parameters:
-download_url: This will be the url utilized to download the file generated with the desired data.
-___________________________________________________________________
-'''
 
 
 def download_zip(download_url_nw, download_url_ne, download_url_sw, dest={destination}):
@@ -337,13 +331,13 @@ def download_zip(download_url_nw, download_url_ne, download_url_sw, dest={destin
     solar_res_sw = requests.get(download_url_sw)
 
     with zipfile.ZipFile(io.BytesIO(solar_res_nw.content)) as zip_file_nw:
-        print("downloading zip file to destination....")
+        print("downloading nw zip file to destination....")
         zip_file_nw.extractall(dest)
     with zipfile.ZipFile(io.BytesIO(solar_res_ne.content)) as zip_file_ne:
-        print("downloading zip file to destination....")
+        print("downloading ne zip file to destination....")
         zip_file_ne.extractall(dest)
     with zipfile.ZipFile(io.BytesIO(solar_res_sw.content)) as zip_file_sw:
-        print("downloading zip file to destination....")
+        print("downloading sw zip file to destination....")
         zip_file_sw.extractall(dest)
 
 
@@ -367,15 +361,15 @@ def download_zip2(download_url_se, download_url_c, download_url_v, dest={destina
     solar_res_v = requests.get(download_url_v)
 
     with zipfile.ZipFile(io.BytesIO(solar_res_se.content)) as zip_file_se:
-        print("downloading zip file to destination....")
+        print("downloading se zip file to destination....")
         zip_file_se.extractall(dest)
 
     with zipfile.ZipFile(io.BytesIO(solar_res_c.content)) as zip_file_c:
-        print("downloading zip file to destination....")
+        print("downloading c zip file to destination....")
         zip_file_c.extractall(dest)
 
     with zipfile.ZipFile(io.BytesIO(solar_res_v.content)) as zip_file_v:
-        print("downloading zip file to destination....")
+        print("downloading v zip file to destination....")
         zip_file_v.extractall(dest)
 
 
@@ -386,31 +380,37 @@ if __name__ == "__main__":
     interval = sys.argv[3]
     email = sys.argv[4]
     items = range(10)
+
     if start_year.isdigit() and end_year.isdigit() and interval.isdigit():
         if int(start_year) >= 2018:
+
             response_nw = nw_request_builder(
                 int(start_year), int(end_year), int(interval), email)
-            print("response_nw", response_nw.content, "\n")
+
             time.sleep(60)
+
             response_ne = ne_request_builder(
                 int(start_year), int(end_year), int(interval), email)
-            print("response_ne", response_ne.content, "\n")
+
             time.sleep(60)
+
             response_sw = sw_request_builder(
                 int(start_year), int(end_year), int(interval), email)
-            print("response_sw", response_sw.content, "\n")
+
             time.sleep(60)
+
             response_se = se_request_builder(
                 int(start_year), int(end_year), int(interval), email)
-            print("response_se", response_se.content, "\n")
+
             time.sleep(60)
+
             response_c = c_request_builder(
                 int(start_year), int(end_year), int(interval), email)
-            print("response_c", response_c.content, "\n")
+
             time.sleep(60)
+
             response_v = v_request_builder(
                 int(start_year), int(end_year), int(interval), email)
-            print("response_v", response_v.content, "\n")
 
             if response_sw.status_code == 200 and response_ne.status_code == 200:
                 if response_sw.status_code == 200 and response_se.status_code == 200:
@@ -421,10 +421,6 @@ if __name__ == "__main__":
                         jsonResponse_se = response_se.json()
                         jsonResponse_c = response_c.json()
                         jsonResponse_v = response_v.json()
-                        # print(jsonResponse_nw, jsonResponse_ne,
-                        #       jsonResponse_sw, "\n")
-                        # print(jsonResponse_se, jsonResponse_c,
-                        #       jsonResponse_v, "\n")
 
                         download_url_nw = jsonResponse_nw['outputs']['downloadUrl']
                         download_url_ne = jsonResponse_ne['outputs']['downloadUrl']
@@ -432,32 +428,32 @@ if __name__ == "__main__":
                         download_url_se = jsonResponse_se['outputs']['downloadUrl']
                         download_url_c = jsonResponse_c['outputs']['downloadUrl']
                         download_url_v = jsonResponse_v['outputs']['downloadUrl']
-                        print(download_url_nw, "\n")
-                        print(download_url_ne, "\n")
-                        print(download_url_sw, "\n")
-                        print(download_url_se, "\n")
-                        print(download_url_c, "\n")
-                        print(download_url_v, "\n")
 
                         print("waiting 40 minutes....zzz....")
+
                         time.sleep(2400)
 
                         timeout_http_adapter(
                             download_url_nw, download_url_ne, download_url_sw)
                         print("waiting 40 minutes....zzz....")
+
                         time.sleep(2400)
 
                         timeout_http_adapter2(
                             download_url_se, download_url_c, download_url_v)
-                        print("waiting 10 minutes....zzz....")
+                        print("waiting 1 minute....zzz....")
+
                         time.sleep(60)
 
                         download_zip(download_url_nw, download_url_ne,
                                      download_url_sw, destination)
-                        print("waiting 10 minutes....zzz....")
+                        print("waiting 1 minute....zzz....")
+
                         time.sleep(60)
 
                         download_zip2(download_url_se, download_url_c,
                                       download_url_v, destination)
         else:
-            print("Enter a valid year starting at 2018 after the file name.")
+            print("Make sure that the run command is in the form of \
+                python <file_name> <start_year> <end_year> <time_interval> <email> \
+                    where <start_year> >= 2018 and <end_year> is the same as <start_year>.")
