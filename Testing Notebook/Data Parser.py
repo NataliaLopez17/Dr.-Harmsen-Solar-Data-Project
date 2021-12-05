@@ -55,7 +55,7 @@ def parse_data(Year):
     return Parsed_Data
 
 
-def File_Generator(Parsed_Dataframe,Values_To_Parse=["GHI","Air Temperature","Wind Speed","DNI","Relative Humidity"]):
+def File_Generator(Parsed_Dataframe,Values_To_Parse=["GHI","DNI","Wind Speed","Temperature","Relative Humidity"]):
     '''
     This function generates a series of Space delimited CSV Files from the Dataframe given, as long as it follows the expected structure.
 
@@ -67,7 +67,7 @@ def File_Generator(Parsed_Dataframe,Values_To_Parse=["GHI","Air Temperature","Wi
 
     
     Values_To_Parse: This must be a list containing all of the values that will be contained within the dataframe in order to generate the desired CSV files.
-    
+
     _____________________________________
     '''
     for Value in Values_To_Parse:
@@ -87,11 +87,12 @@ def File_Generator(Parsed_Dataframe,Values_To_Parse=["GHI","Air Temperature","Wi
 
 if __name__ == "__main__":
     # Identify the current year desired. 
-    if(sys.argv[1]<=2017 and sys.argv[1]>=1998):
-        Parsed_Data = parse_data(sys.argv[1])
-        File_Generator(Parsed_Data,Values_To_Parse=["GHI","Air Temperature","Wind Speed","DNI"])
-    elif(sys.sys.argv[1]>=2018):
-        Parsed_Data = parse_data(sys.argv[1])
+    year = int(sys.argv[1])
+    if(year<=2017 and year>=1998):
+        Parsed_Data = parse_data(year)
+        File_Generator(Parsed_Data,Values_To_Parse=["GHI","DNI","Wind Speed","Air Temperature"])
+    elif(year>=2018):
+        Parsed_Data = parse_data(year)
         File_Generator(Parsed_Dataframe=Parsed_Data)       
     else:
         print("Enter a valid year after the script name.")
