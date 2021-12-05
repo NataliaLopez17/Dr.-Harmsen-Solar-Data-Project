@@ -78,7 +78,7 @@ def File_Generator(Parsed_Dataframe,Values_To_Parse=["GHI","DNI","Wind Speed","T
             # DNIData = pd.DataFrame(data={'value': [row['DNI']],'Latitude': [rowIndex[1]],'Longitude': [rowIndex[2]]})
             # WindSpeedData = pd.DataFrame(data={'value': [row['Wind Speed']],'Latitude': [rowIndex[1]],'Longitude': [rowIndex[2]]})
             # RelHumData = pd.DataFrame(data={'value': [row['Relative Humidity']],'Latitude': [rowIndex[1]],'Longitude': [rowIndex[2]]})
-            Data.to_csv(path_or_buf=f"../Test Data/{Value}/{Value}{rowIndex[0].strftime('%Y%j')}",header=False,index=False,sep=' ')
+            Data.to_csv(path_or_buf=f"../Test Data/{Value}/{Value}{rowIndex[0].strftime('%Y%j')}.csv",header=False,index=False,sep=' ')
             # AirTempData.to_csv(path_or_buf=f"../Test Data/AirTemp/AirTemperature{rowIndex[0].strftime('%Y%j')}",header=False,index=False,sep=' ')
             # DNIData .to_csv(path_or_buf=f"../Test Data/DNI/DNI{rowIndex[0].strftime('%Y%j')}",header=False,index=False,sep=' ')
             # WindSpeedData.to_csv(path_or_buf=f"../Test Data/WindSpeed/WindSpeed{rowIndex[0].strftime('%Y%j')}",header=False,index=False,sep=' ')
