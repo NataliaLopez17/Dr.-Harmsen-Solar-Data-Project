@@ -3,7 +3,28 @@
 
 
 '''
-import pandas as pd, datetime, glob, sys
+import pandas as pd, datetime, glob, sys, os, logging
+
+
+data_dir = " "
+
+
+def make_dir(Directory_names):
+    """
+    Will take in a list of the directory names to create and then will proceed to generate the directories
+     _____________________________________
+
+    Parameters: 
+
+    Directory_names:  This is a list that must contain all of the names that will be used to create the desired directories within the Data directory.
+    """
+
+    for name in Directory_names:
+        if not os.path.isdir(data_dir+name):
+            os.makedirs(data_dir+name)
+        else:
+            continue
+
 
 # This is used by the parsers of data in order to generate the appropriate index.
 custom_date_parser = lambda x,y,z,a,b: datetime.datetime.strptime(f"{x} {y} {z} {a} {b}", "%Y %m %d %H %M")
@@ -52,6 +73,7 @@ def parse_data(Year):
             BigDF = BigDF.append([Csv_DF])
     else:
         Parsed_Data = BigDF.groupby([pd.Grouper(key="Date", freq='1D'),"Latitude","Longitude"]).mean()
+        Parsed_Data = Parsed_Data.round(2)
     return Parsed_Data
 
 
@@ -72,17 +94,8 @@ def File_Generator(Parsed_Dataframe,Values_To_Parse=["GHI","DNI","Wind Speed","T
     '''
     for Value in Values_To_Parse:
         for rowIndex, row in  Parsed_Dataframe.iterrows():
-            # print(rowIndex[1],rowIndex[2],row['GHI'])
             Data = pd.DataFrame(data={'value': [row[Value]],'Latitude': [rowIndex[1]],'Longitude': [rowIndex[2]]})
-            # AirTempData = pd.DataFrame(data={'value': [row['Air Temperature']],'Latitude': [rowIndex[1]],'Longitude': [rowIndex[2]]})
-            # DNIData = pd.DataFrame(data={'value': [row['DNI']],'Latitude': [rowIndex[1]],'Longitude': [rowIndex[2]]})
-            # WindSpeedData = pd.DataFrame(data={'value': [row['Wind Speed']],'Latitude': [rowIndex[1]],'Longitude': [rowIndex[2]]})
-            # RelHumData = pd.DataFrame(data={'value': [row['Relative Humidity']],'Latitude': [rowIndex[1]],'Longitude': [rowIndex[2]]})
-            Data.to_csv(path_or_buf=f"../Test Data/{Value}/{Value}{rowIndex[0].strftime('%Y%j')}.csv",header=False,index=False,sep=' ')
-            # AirTempData.to_csv(path_or_buf=f"../Test Data/AirTemp/AirTemperature{rowIndex[0].strftime('%Y%j')}",header=False,index=False,sep=' ')
-            # DNIData .to_csv(path_or_buf=f"../Test Data/DNI/DNI{rowIndex[0].strftime('%Y%j')}",header=False,index=False,sep=' ')
-            # WindSpeedData.to_csv(path_or_buf=f"../Test Data/WindSpeed/WindSpeed{rowIndex[0].strftime('%Y%j')}",header=False,index=False,sep=' ')
-            # RelHumData.to_csv(path_or_buf=f"../Test Data/RelHum/RelativeHumidity{rowIndex[0].strftime('%Y%j')}",header=False,index=False,sep=' ')
+            Data.to_csv(path_or_buf=f"{data_dir}{Value}/{Value}{rowIndex[0].strftime('%Y%j')}.csv",header=False,index=False,sep=' ')
 
 
 if __name__ == "__main__":
@@ -90,9 +103,11 @@ if __name__ == "__main__":
     year = int(sys.argv[1])
     if(year<=2017 and year>=1998):
         Parsed_Data = parse_data(year)
+        make_dir(["GHI","DNI","Wind Speed","Air Temperature"])
         File_Generator(Parsed_Data,Values_To_Parse=["GHI","DNI","Wind Speed","Air Temperature"])
     elif(year>=2018):
         Parsed_Data = parse_data(year)
+        make_dir(["GHI","DNI","Wind Speed","Temperature","Relative Humidity"])
         File_Generator(Parsed_Dataframe=Parsed_Data)       
     else:
         print("Enter a valid year after the script name.")
