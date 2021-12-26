@@ -4,5 +4,7 @@ max-line-length=200
 disable=
     trailing-whitespace,
     consider-using-f-string,
-    redefined-outer-name
+    redefined-outer-name,
+    invalid-name,
+    dangerous-default-value,
 
