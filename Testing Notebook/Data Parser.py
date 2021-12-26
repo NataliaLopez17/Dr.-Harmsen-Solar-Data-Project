@@ -6,10 +6,10 @@
 import pandas as pd, datetime, glob, sys, os, logging
 
 
-data_dir = " "
+data_dir = f"..\\Data\\"
 
 
-def make_dir(Directory_names):
+def make_dir(Year,Directory_names):
     """
     Will take in a list of the directory names to create and then will proceed to generate the directories
      _____________________________________
@@ -20,8 +20,8 @@ def make_dir(Directory_names):
     """
 
     for name in Directory_names:
-        if not os.path.isdir(data_dir+name):
-            os.makedirs(data_dir+name)
+        if not os.path.isdir(data_dir+Year+name):
+            os.makedirs(data_dir+Year+name)
         else:
             continue
 
@@ -71,9 +71,9 @@ def parse_data(Year):
             Csv_DF["Longitude"] = Lat_Lon_DF1.Longitude[0]
             Csv_DF["Latitude"] = Lat_Lon_DF1.Latitude[0]
             BigDF = BigDF.append([Csv_DF])
-    else:
-        Parsed_Data = BigDF.groupby([pd.Grouper(key="Date", freq='1D'),"Latitude","Longitude"]).mean()
-        Parsed_Data = Parsed_Data.round(2)
+    
+    Parsed_Data = BigDF.groupby([pd.Grouper(key="Date", freq='1D'),"Latitude","Longitude"]).mean()
+    Parsed_Data = Parsed_Data.round(2)
     return Parsed_Data
 
 
@@ -92,10 +92,18 @@ def File_Generator(Parsed_Dataframe,Values_To_Parse=["GHI","DNI","Wind Speed","T
 
     _____________________________________
     '''
+    expected_date = datetime.date(2020,1,1)
+    day_offset = datetime.timedelta(days=1)
     for Value in Values_To_Parse:
+        Data = pd.DataFrame(columns=['value','latitude','longitude'])
         for rowIndex, row in  Parsed_Dataframe.iterrows():
-            Data = pd.DataFrame(data={'value': [row[Value]],'Latitude': [rowIndex[1]],'Longitude': [rowIndex[2]]})
-            Data.to_csv(path_or_buf=f"{data_dir}{Value}/{Value}{rowIndex[0].strftime('%Y%j')}.csv",header=False,index=False,sep=' ')
+            if rowIndex[0].date() == expected_date:
+                Data.append({'value':[row[Value]],'latitude':[rowIndex[1]],'longitude': [rowIndex[2]]},ignore_index=True)
+            else:
+                Data.to_csv(path_or_buf=f"{data_dir}{rowIndex[0].strftime('%Y')}{Value}/{Value}{expected_date.strftime('%Y%j')}.csv",header=False,index=False,sep=' ')
+                Data.drop(index=Data.index, inplace=True)
+                expected_date = expected_date+day_offset
+
 
 
 if __name__ == "__main__":
@@ -103,11 +111,11 @@ if __name__ == "__main__":
     year = int(sys.argv[1])
     if(year<=2017 and year>=1998):
         Parsed_Data = parse_data(year)
-        make_dir(["GHI","DNI","Wind Speed","Air Temperature"])
+        make_dir(str(year),["GHI","DNI","Wind Speed","Air Temperature"])
         File_Generator(Parsed_Data,Values_To_Parse=["GHI","DNI","Wind Speed","Air Temperature"])
     elif(year>=2018):
         Parsed_Data = parse_data(year)
-        make_dir(["GHI","DNI","Wind Speed","Temperature","Relative Humidity"])
+        make_dir(str(year),["GHI","DNI","Wind Speed","Temperature","Relative Humidity"])
         File_Generator(Parsed_Dataframe=Parsed_Data)       
     else:
         print("Enter a valid year after the script name.")
