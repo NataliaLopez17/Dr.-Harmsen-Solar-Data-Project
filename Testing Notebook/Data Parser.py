@@ -77,7 +77,7 @@ def parse_data(Year):
     return Parsed_Data
 
 
-def File_Generator(Parsed_Dataframe,Values_To_Parse=["GHI","DNI","Wind Speed","Temperature","Relative Humidity"]):
+def File_Generator(Parsed_Dataframe,Year,Values_To_Parse=["GHI","DNI","Wind Speed","Temperature","Relative Humidity"]):
     '''
     This function generates a series of Space delimited CSV Files from the Dataframe given, as long as it follows the expected structure.
 
@@ -92,13 +92,15 @@ def File_Generator(Parsed_Dataframe,Values_To_Parse=["GHI","DNI","Wind Speed","T
 
     _____________________________________
     '''
-    expected_date = datetime.date(2020,1,1)
+    expected_date = datetime.date(Year,1,1)
     day_offset = datetime.timedelta(days=1)
     for Value in Values_To_Parse:
         Data = pd.DataFrame(columns=['value','latitude','longitude'])
         for rowIndex, row in  Parsed_Dataframe.iterrows():
             if rowIndex[0].date() == expected_date:
                 Data.append({'value':[row[Value]],'latitude':[rowIndex[1]],'longitude': [rowIndex[2]]},ignore_index=True)
+            elif expected_date.year > rowIndex[0].date().year:
+                break
             else:
                 Data.to_csv(path_or_buf=f"{data_dir}{rowIndex[0].strftime('%Y')}{Value}/{Value}{expected_date.strftime('%Y%j')}.csv",header=False,index=False,sep=' ')
                 Data.drop(index=Data.index, inplace=True)
@@ -116,7 +118,7 @@ if __name__ == "__main__":
     elif(year>=2018):
         Parsed_Data = parse_data(year)
         make_dir(str(year),["GHI","DNI","Wind Speed","Temperature","Relative Humidity"])
-        File_Generator(Parsed_Dataframe=Parsed_Data)       
+        File_Generator(Parsed_Dataframe=Parsed_Data,Year=year)       
     else:
         print("Enter a valid year after the script name.")
 
