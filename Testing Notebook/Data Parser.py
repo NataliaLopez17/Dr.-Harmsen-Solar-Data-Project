@@ -92,26 +92,33 @@ def File_Generator(Parsed_Dataframe, Year, Values_To_Parse=["GHI", "DNI", "Wind 
     _____________________________________
     '''
     expected_date = datetime.date(int(Year), 1, 1)
+
     day_offset = datetime.timedelta(days=1)
-    # Values_To_Parse = ["GHI", "DNI", "Wind Speed","Temperature", "Relative Humidity"]
+    Values_To_Parse = ["GHI", "DNI", "Wind Speed",
+                       "Temperature", "Relative Humidity"]
     for Value in Values_To_Parse:
         Data = pd.DataFrame(columns=['value', 'latitude', 'longitude'])
         for rowIndex, row in Parsed_Dataframe.iterrows():
+            # print(f"rowIndex[0] = {rowIndex[0]}")
+            # print(f"rowIndex[1] = {rowIndex[1]}")
+            # print(f"rowIndex[2] = {rowIndex[2]}")
+            # print(f"row = {row}")
             if rowIndex[0].date() == expected_date:
-                Data.append({'value': [row[Value]], 'latitude': [
+                Data = Data.append({'value': [row[Value]], 'latitude': [
                     rowIndex[1]], 'longitude': [rowIndex[2]]}, ignore_index=True)
+                # print(Data)
             elif expected_date.year > rowIndex[0].date().year and expected_date.day >= 2:
                 expected_date = datetime.date(int(Year), 1, 1)
+                # print(f"Expected date: {expected_date}")
                 continue
-            elif expected_date.day == 365:
-                Data.append({'value': [row[Value]], 'latitude': [
-                    rowIndex[1]], 'longitude': [rowIndex[2]]}, ignore_index=True)
             else:
                 Data.to_csv(
                     path_or_buf=f"{data_dir}{rowIndex[0].strftime('%Y')}{Value}/{Value}{expected_date.strftime('%Y%j')}.csv",
                     header=False, index=False, sep=' ')
                 Data.drop(index=Data.index, inplace=True)
                 expected_date = expected_date+day_offset
+                # print(f"This is the expected date after the offset: {expected_date}")
+    return Data
 
 
 if __name__ == "__main__":
