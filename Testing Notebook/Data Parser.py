@@ -49,8 +49,8 @@ def parse_data(Year):
     # Create the DataFrame that will be utilized to store all of the parsed data.
     BigDF = pd.DataFrame()
     # Store all of the files as a list, in order to access it in the loop appropriately.
-    files = glob.glob(f"../Solar Data/**/*{Year}.csv", recursive=True)
-    dateparse = lambda x: pd.datetime.strptime(x, '%Y %m %d %H %M')
+    files = glob.glob(f"../NREL Data/**/*{Year}.csv", recursive=True)
+    def dateparse(x): return pd.datetime.strptime(x, '%Y %m %d %H %M')
     for index in range(0, len(files)):
         if len(files) > 2:
             DataFile = files.pop()
@@ -104,8 +104,8 @@ def File_Generator(Parsed_Dataframe, Year, Values_To_Parse=["GHI", "DNI", "Wind 
             # print(f"rowIndex[2] = {rowIndex[2]}")
             # print(f"row = {row}")
             if rowIndex[0].date() == expected_date:
-                Data = Data.append({'value': [row[Value]], 'latitude': [
-                    rowIndex[1]], 'longitude': [rowIndex[2]]}, ignore_index=True)
+                Data = Data.append({'value': row[Value], 'latitude': 
+                    rowIndex[1], 'longitude': rowIndex[2]}, ignore_index=True)
                 # print(Data)
             elif expected_date.year > rowIndex[0].date().year and expected_date.day >= 2:
                 expected_date = datetime.date(int(Year), 1, 1)
@@ -118,6 +118,7 @@ def File_Generator(Parsed_Dataframe, Year, Values_To_Parse=["GHI", "DNI", "Wind 
                 Data.drop(index=Data.index, inplace=True)
                 expected_date = expected_date+day_offset
                 # print(f"This is the expected date after the offset: {expected_date}")
+        # print(Data)
     return Data
 
 
@@ -129,14 +130,14 @@ if __name__ == "__main__":
         make_dir(str(year), ["GHI", "DNI", "Wind Speed", "Air Temperature"])
         File_Generator(Parsed_Data, year, Values_To_Parse=[
                        "GHI", "DNI", "Wind Speed", "Air Temperature"])
-        print("--- %s seconds ---" % (time.time() - start_time))
+        # print("--- %s seconds ---" % (time.time() - start_time))
 
     elif year >= 2018:
         Parsed_Data = parse_data(year)
         make_dir(str(year), ["GHI", "DNI", "Wind Speed",
                  "Temperature", "Relative Humidity"])
         File_Generator(Parsed_Dataframe=Parsed_Data, Year=year)
-        print("--- %s seconds ---" % (time.time() - start_time))
+        # print("--- %s seconds ---" % (time.time() - start_time))
 
     else:
         print("Enter a valid year after the script name.")
