@@ -87,6 +87,7 @@ def File_Generator(Parsed_Dataframe,Year,Values_To_Parse=["GHI","DNI","Wind Spee
 
     Parsed_Dataframe: Must be the dataframe generated from the parse_data function. It must contain all latitudes, longitudes, dates, and values desired.
 
+    Year: Must be the year for the data contained within the dataframe. 
     
     Values_To_Parse: This must be a list containing all of the values that will be contained within the dataframe in order to generate the desired CSV files.
 
@@ -98,9 +99,9 @@ def File_Generator(Parsed_Dataframe,Year,Values_To_Parse=["GHI","DNI","Wind Spee
         Data = pd.DataFrame(columns=['value','latitude','longitude'])
         for rowIndex, row in  Parsed_Dataframe.iterrows():
             if rowIndex[0].date() == expected_date:
-                Data.append({'value':[row[Value]],'latitude':[rowIndex[1]],'longitude': [rowIndex[2]]},ignore_index=True)
-            elif expected_date.year > rowIndex[0].date().year:
-                break
+                Data = Data.append({'value':row[Value],'latitude':rowIndex[1],'longitude': rowIndex[2]},ignore_index=True)
+            elif expected_date.year > rowIndex[0].date().year and expected_date.day >= 2:
+                expected_date = datetime.date(Year,1,1)
             else:
                 Data.to_csv(path_or_buf=f"{data_dir}{rowIndex[0].strftime('%Y')}{Value}/{Value}{expected_date.strftime('%Y%j')}.csv",header=False,index=False,sep=' ')
                 Data.drop(index=Data.index, inplace=True)
