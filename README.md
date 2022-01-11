@@ -1,3 +1,9 @@
+## To Start Using
+```
+$ In the .env file, fill in the blank variables
+$ For the API key, the user must create an account on the NREL website
+```
+
 ## To Run Yearly_Solar_Data.py
 ```
 $ Download the .zip file wherever you want
