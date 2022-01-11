@@ -1,7 +1,6 @@
-.env
+.env2
 .pylintrc
 .vscode
 /NREL Data/
-/Test Data/
 .gitignore
 /Data/
