@@ -9,7 +9,6 @@ $ click enter and wait the time indicated (approx 40 minutes).
 
 ## To Run Data Parser.py
 ```
-$ Download the .zip file wherever you want
 $ Go to the directory where the Data Parser.py file is at.
 $ In the cmd, write python <file_name> <year>
 $ click enter and wait the time indicated (approx 3 hours).
