@@ -11,7 +11,7 @@ $ Download the .zip file wherever you want
 $ Go to the directory where the Yearly_Solar_Data.py file is at.
 $ In the cmd, write python <file_name> <start_year> <end_year> <time_interval> <email>
 $ <start_year> and <end_year> have to be the same.
-$ click enter and wait the time indicated (approx 40 minutes).
+$ click enter and wait the time indicated (approx 2 hours).
 ```
 
 ## To Run Data Parser.py
