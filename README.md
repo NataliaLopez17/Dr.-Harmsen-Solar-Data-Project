@@ -14,7 +14,7 @@ $ <start_year> and <end_year> have to be the same.
 $ click enter and wait the time indicated (approx 2 hours).
 ```
 
-## To Run Data Parser.py
+## To Run Data_Parser.py
 ```
 $ Go to the directory where the Data Parser.py file is at.
 $ In the cmd, write python <file_name> <year>
