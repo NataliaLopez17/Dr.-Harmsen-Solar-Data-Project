@@ -1,7 +1,7 @@
 ## To Start Using
 ```
 $ In the .env file, fill in the blank variables
-$ For the API key, the user must create an account on the NREL website
+$ For the API_KEY, the user must create an account on the NREL website
 $ The DESTINATION variable means the directory on the device in which the user would like to store the downloaded files
 ```
 
