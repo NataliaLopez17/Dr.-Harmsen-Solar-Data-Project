@@ -94,8 +94,6 @@ def File_Generator(Parsed_Dataframe, Year, Values_To_Parse=["GHI", "DNI", "Wind 
     expected_date = datetime.date(int(Year), 1, 1)
 
     day_offset = datetime.timedelta(days=1)
-    Values_To_Parse = ["GHI", "DNI", "Wind Speed",
-                       "Temperature", "Relative Humidity"]
     for Value in Values_To_Parse:
         Data = pd.DataFrame(columns=['value', 'latitude', 'longitude'])
         for rowIndex, row in Parsed_Dataframe.iterrows():

@@ -7,6 +7,5 @@ disable=
     redefined-outer-name,
     invalid-name,
     dangerous-default-value,
-    unindent-not-expected,
-    expected-expression,
+    pointless-string-statement
 
