@@ -1,8 +1,0 @@
-.pylintrc
-/vscode/
-test.ipynb
-/NREL Data/
-.gitignore
-README.md
-.env_copy
-/Data/
