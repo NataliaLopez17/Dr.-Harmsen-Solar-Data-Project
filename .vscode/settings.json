@@ -1,7 +1,0 @@
-{
-  "python.linting.enabled": true,
-  "python.linting.pylintEnabled": true,
-  "editor.defaultFormatter": "ms-python.python",
-  "editor.mouseWheelZoom": true,
-  "python.linting.pylintPath": "d:/users/viaje/anaconda3/envs/solarData/Scripts/pylint.exe"
-}
