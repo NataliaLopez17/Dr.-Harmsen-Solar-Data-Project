@@ -91,7 +91,8 @@ def request_builder(start=2021, end=2021, interval=15, email={default_email}):
             start, interval, attributes, email, i)
         response = requests.request(
             "POST", url_after_2018, data=payload, headers=headers)
-        print("response = ", response)
+        print("response = ", response.json())
+        print("payload = ", payload)
         jsonResponse = response.json()
         print("jsonResponse = ", jsonResponse)
         time.sleep(60)

@@ -29,8 +29,7 @@ def make_dir(Year, Directory_names):
         else:
             continue
         end = time.time()
-        print("Elapsed time making directory: ",
-              (end - start) * 10**3, "seconds")
+        print("Elapsed time making directory: ", (end - start))
 
 
 def custom_date_parser(x, y, z, a, b):
@@ -86,12 +85,11 @@ def parse_data(Year):
     Parsed_Data = Parsed_Data.round(2)
 
     end = time.time()
-    print("Elapsed time parsed data: ",
-          (end - start) * 10**3, "seconds")
+    print("Elapsed time parsed data: ", (end - start))
     return Parsed_Data
 
 
-def File_Generator(Parsed_Dataframe, Year, Values_To_Parse=["Temperature", "Wind Speed"]):
+def File_Generator(Parsed_Dataframe, Year, Values_To_Parse=["DNI", "GHI", "Relative Humidity", "Temperature", "Wind Speed"]):
     '''
     This function generates a series of Space delimited CSV Files from the Dataframe given, as long as it follows the expected structure.
     _____________________________________
@@ -129,8 +127,7 @@ def File_Generator(Parsed_Dataframe, Year, Values_To_Parse=["Temperature", "Wind
                 # print(f"This is the expected date after the offset: {expected_date}")
         # print(Data)
     end = time.time()
-    print("Elapsed time file generator: ",
-          (end - start) * 10**3, "seconds")
+    print("Elapsed time file generator: ", (end - start))
     return Data
 
 
@@ -148,7 +145,8 @@ if __name__ == "__main__":
         print("parsing data...")
         Parsed_Data = parse_data(year)
         print("making directories...")
-        make_dir(str(year), ["Wind Speed","Temperature"])
+        make_dir(str(year), ["DNI", "GHI",
+                 "Relative Humidity", "Wind Speed", "Temperature"])
         print("generating files...")
         File_Generator(Parsed_Dataframe=Parsed_Data, Year=year)
 
