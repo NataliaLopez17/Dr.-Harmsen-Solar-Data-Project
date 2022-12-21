@@ -1,4 +1,5 @@
-.env2
+.env
+.env_copy
 .pylintrc
 .vscode
 /NREL Data/
