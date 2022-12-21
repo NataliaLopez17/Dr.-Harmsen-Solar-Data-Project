@@ -1,15 +1,16 @@
 ''' 
 @author: Elias Chevere
 '''
+
+import pandas as pd
 import datetime
 import glob
 import sys
 import os
 import time
-import pandas as pd
+import warnings
+warnings.simplefilter(action='ignore', category=FutureWarning)
 
-
-start_time = time.time()
 data_dir = f"..\\Data\\"
 
 
@@ -22,10 +23,14 @@ def make_dir(Year, Directory_names):
     """
 
     for name in Directory_names:
+        start = time.time()
         if not os.path.isdir(data_dir+Year+name):
             os.makedirs(data_dir+Year+name)
         else:
             continue
+        end = time.time()
+        print("Elapsed time making directory: ",
+              (end - start) * 10**3, "seconds")
 
 
 def custom_date_parser(x, y, z, a, b):
@@ -52,6 +57,7 @@ def parse_data(Year):
     files = glob.glob(f"../NREL Data/**/*{Year}.csv", recursive=True)
     def dateparse(x): return pd.datetime.strptime(x, '%Y %m %d %H %M')
     for index in range(0, len(files)):
+        start = time.time()
         if len(files) > 2:
             DataFile = files.pop()
             DataFile2 = files.pop()
@@ -78,10 +84,14 @@ def parse_data(Year):
     Parsed_Data = BigDF.groupby(
         [pd.Grouper(key="Date", freq='1D'), "Latitude", "Longitude"]).mean()
     Parsed_Data = Parsed_Data.round(2)
+
+    end = time.time()
+    print("Elapsed time parsed data: ",
+          (end - start) * 10**3, "seconds")
     return Parsed_Data
 
 
-def File_Generator(Parsed_Dataframe, Year, Values_To_Parse=["DHI", "GHI", "DNI", "Air Temperature"]):
+def File_Generator(Parsed_Dataframe, Year, Values_To_Parse=["Temperature", "Wind Speed"]):
     '''
     This function generates a series of Space delimited CSV Files from the Dataframe given, as long as it follows the expected structure.
     _____________________________________
@@ -95,6 +105,7 @@ def File_Generator(Parsed_Dataframe, Year, Values_To_Parse=["DHI", "GHI", "DNI",
 
     day_offset = datetime.timedelta(days=1)
     for Value in Values_To_Parse:
+        start = time.time()
         Data = pd.DataFrame(columns=['value', 'latitude', 'longitude'])
         for rowIndex, row in Parsed_Dataframe.iterrows():
             # print(f"rowIndex[0] = {rowIndex[0]}")
@@ -117,6 +128,9 @@ def File_Generator(Parsed_Dataframe, Year, Values_To_Parse=["DHI", "GHI", "DNI",
                 expected_date = expected_date+day_offset
                 # print(f"This is the expected date after the offset: {expected_date}")
         # print(Data)
+    end = time.time()
+    print("Elapsed time file generator: ",
+          (end - start) * 10**3, "seconds")
     return Data
 
 
@@ -131,11 +145,12 @@ if __name__ == "__main__":
         # print("--- %s seconds ---" % (time.time() - start_time))
 
     elif year >= 2018:
+        print("parsing data...")
         Parsed_Data = parse_data(year)
-        make_dir(str(year), ["GHI", "DNI", "Wind Speed",
-                 "Temperature", "Relative Humidity"])
+        print("making directories...")
+        make_dir(str(year), ["Wind Speed","Temperature"])
+        print("generating files...")
         File_Generator(Parsed_Dataframe=Parsed_Data, Year=year)
-        # print("--- %s seconds ---" % (time.time() - start_time))
 
     else:
         print("Enter a valid year after the script name.")
