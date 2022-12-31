@@ -28,8 +28,6 @@ def make_dir(Year, Directory_names):
             os.makedirs(data_dir+Year+name)
         else:
             continue
-        end = time.time()
-        print("Elapsed time making directory: ", (end - start))
 
 
 def custom_date_parser(x, y, z, a, b):
@@ -56,7 +54,6 @@ def parse_data(Year):
     files = glob.glob(f"../NREL Data/**/*{Year}.csv", recursive=True)
     def dateparse(x): return pd.datetime.strptime(x, '%Y %m %d %H %M')
     for index in range(0, len(files)):
-        start = time.time()
         if len(files) > 2:
             DataFile = files.pop()
             DataFile2 = files.pop()
@@ -83,9 +80,6 @@ def parse_data(Year):
     Parsed_Data = BigDF.groupby(
         [pd.Grouper(key="Date", freq='1D'), "Latitude", "Longitude"]).mean()
     Parsed_Data = Parsed_Data.round(2)
-
-    end = time.time()
-    print("Elapsed time parsed data: ", (end - start))
     return Parsed_Data
 
 
@@ -103,31 +97,21 @@ def File_Generator(Parsed_Dataframe, Year, Values_To_Parse=["DNI", "GHI", "Relat
 
     day_offset = datetime.timedelta(days=1)
     for Value in Values_To_Parse:
-        start = time.time()
         Data = pd.DataFrame(columns=['value', 'latitude', 'longitude'])
-        for rowIndex, row in Parsed_Dataframe.iterrows():
-            # print(f"rowIndex[0] = {rowIndex[0]}")
-            # print(f"rowIndex[1] = {rowIndex[1]}")
-            # print(f"rowIndex[2] = {rowIndex[2]}")
-            # print(f"row = {row}")
+        for rowIndex, row in Parsed_Data.iterrows():
             if rowIndex[0].date() == expected_date:
                 Data = Data.append({'value': row[Value], 'latitude':
                                     rowIndex[1], 'longitude': rowIndex[2]}, ignore_index=True)
-                # print(Data)
             elif expected_date.year > rowIndex[0].date().year and expected_date.day >= 2:
                 expected_date = datetime.date(int(Year), 1, 1)
-                # print(f"Expected date: {expected_date}")
                 continue
             else:
                 Data.to_csv(
                     path_or_buf=f"{data_dir}{rowIndex[0].strftime('%Y')}{Value}/{Value}{expected_date.strftime('%Y%j')}.csv",
-                    header=False, index=False, sep=' ')
+                    header=True, index=False, sep=',', mode='w', encoding='utf-8')
                 Data.drop(index=Data.index, inplace=True)
                 expected_date = expected_date+day_offset
-                # print(f"This is the expected date after the offset: {expected_date}")
-        # print(Data)
-    end = time.time()
-    print("Elapsed time file generator: ", (end - start))
+    # print(Data)
     return Data
 
 
@@ -139,7 +123,6 @@ if __name__ == "__main__":
         make_dir(str(year), ["DHI", "GHI", "DNI", "Air Temperature"])
         File_Generator(Parsed_Data, year, Values_To_Parse=[
                        "DHI", "GHI", "DNI", "Air Temperature"])
-        # print("--- %s seconds ---" % (time.time() - start_time))
 
     elif year >= 2018:
         print("parsing data...")
